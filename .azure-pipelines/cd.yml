@@ -1,0 +1,35 @@
+trigger: none
+
+resources:
+  pipelines:
+    - pipeline: ciPipeline
+      source: ci
+      trigger:
+        branches:
+          include:
+            - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  azureSubscription: 'azureml-connection'  # your service connection
+  resourceGroup: 'your-resource-group'
+  workspaceName: 'your-ml-workspace'
+
+steps:
+- task: DownloadPipelineArtifact@2
+  inputs:
+    artifact: 'ml-artifacts'
+    path: '$(Pipeline.Workspace)/ml-artifacts'
+
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: $(azureSubscription)
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      az extension add -n ml -y
+      az configure --defaults workspace=$(workspaceName) group=$(resourceGroup)
+      cd $(Pipeline.Workspace)/ml-artifacts
+      az ml job create --file train-job.yml
