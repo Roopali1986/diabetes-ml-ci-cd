@@ -13,9 +13,9 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  azureSubscription: 'azureml-connection'  # your service connection
-  resourceGroup: 'your-resource-group'
-  workspaceName: 'your-ml-workspace'
+  azureSubscription: 'llm_ml'
+  resourceGroup: 'mlops'
+  workspaceName: 'llm_mlops'
 
 steps:
 - task: DownloadPipelineArtifact@2
